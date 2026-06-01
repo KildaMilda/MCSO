@@ -17,8 +17,8 @@ if (session_status() === PHP_SESSION_NONE) {
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="http://172.21.174.34/assets/css/style.css">
-    <link rel="icon" type="image/svg+xml" href="http://172.21.174.34/assets/images/favicon.svg">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
 </head>
 <body>
 <!-- NAVBAR -->
