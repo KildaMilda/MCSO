@@ -1,4 +1,10 @@
 <?php include 'includes/header.php'; ?>
+<?php
+session_start();
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+?>
 <section class="py-5">
     <div class="container">
         <div class="row justify-content-center">
@@ -16,6 +22,11 @@
                         Отправьте сообщение администрации портала
                     </p>
                     <form action="save.php" method="POST">
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
+                        >
                         <div class="mb-3">
                             <label class="form-label">
                                 Ваше имя
