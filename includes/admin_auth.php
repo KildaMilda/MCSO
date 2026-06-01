@@ -1,5 +1,6 @@
 <?php
 require 'auth.php';
-if ($_SESSION['role'] !== 'admin') {
-    die("Доступ запрещён");
+if (!isset($_SESSION['admin'])) {
+    header('Location: login.php');
+    exit;
 }
