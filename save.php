@@ -3,6 +3,15 @@ require 'config/db.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
+        if (empty($email)) {
+            die('Email обязателен');
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            die('Некорректный email');
+        }
+        if (strlen($email) > 255) {
+            die('Слишком длинный email');
+        }
     $message = trim($_POST['message']);
     /*
      * Защита от XSS
