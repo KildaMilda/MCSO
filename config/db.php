@@ -1,9 +1,11 @@
 <?php
 
-$host = 'localhost';
-$dbname = 'mcso';
-$username = 'mcso_user';
-$password = 'P@ssw0rd';
+require_once __DIR__ . '/env.php';
+
+$host = $_ENV['DB_HOST'];
+$dbname = $_ENV['DB_NAME'];
+$username = $_ENV['DB_USER'];
+$password = $_ENV['DB_PASSWORD'];
 
 try {
 
