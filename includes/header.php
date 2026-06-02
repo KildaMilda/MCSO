@@ -74,7 +74,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <?php else: ?>
                     <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
                         <a class="btn btn-primary px-4 py-2 rounded-3"
-                           href="/login.php">
+                           href="/logout_confirm.php">
                             Войти
                         </a>
                     </li>
