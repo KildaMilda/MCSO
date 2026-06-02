@@ -8,6 +8,13 @@ if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
 session_start();
 require 'config/db.php';
 $error = '';
+$successMessage = '';
+if (isset($_GET['logout']) && $_GET['logout'] == 1) {
+    $successMessage = 'Вы успешно вышли из системы.';
+}
+if (isset($_GET['timeout']) && $_GET['timeout'] == 1) {
+    $error = 'Сессия истекла из-за неактивности. Войдите снова.';
+}
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
