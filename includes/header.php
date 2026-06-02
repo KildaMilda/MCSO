@@ -67,7 +67,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                             <?= htmlspecialchars($_SESSION['username']) ?>
                         </span>
                         <a class="btn btn-outline-danger px-4 py-2 rounded-3"
-                           href="/logout_confirm.php">
+                            href="/logout_confirm.php">
                             Выйти
                         </a>
                     </li>
@@ -75,7 +75,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
                         <a class="btn btn-primary px-4 py-2 rounded-3"
                            href="/login.php">
-                            Войти
+                           Войти
                         </a>
                     </li>
                 <?php endif; ?>
