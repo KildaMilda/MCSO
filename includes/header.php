@@ -67,14 +67,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                             <?= htmlspecialchars($_SESSION['username']) ?>
                         </span>
                         <a class="btn btn-outline-danger px-4 py-2 rounded-3"
-                           href="/logout.php">
+                           href="/logout_confirm.php">
                             Выйти
                         </a>
                     </li>
                 <?php else: ?>
                     <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
                         <a class="btn btn-primary px-4 py-2 rounded-3"
-                           href="/logout_confirm.php">
+                           href="/login.php">
                             Войти
                         </a>
                     </li>
