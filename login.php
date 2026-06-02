@@ -47,6 +47,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <?= htmlspecialchars($error) ?>
                         </div>
                     <?php endif; ?>
+                    <?php if ($successMessage): ?>
+                        <div class="alert alert-success text-center">
+                            <?= htmlspecialchars($successMessage) ?>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($error): ?>
+                        <div class="alert alert-danger">
+                            <?= htmlspecialchars($error) ?>
+                        </div>
+                    <?php endif; ?>
                     <form method="POST">
                         <div class="mb-3">
                             <label class="form-label">Логин</label>
