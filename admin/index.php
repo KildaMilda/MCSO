@@ -1,7 +1,6 @@
-<?php
-require '../includes/admin_auth.php';
-?>
+<?php require '../includes/admin_auth.php';?>
 <?php include '../includes/header.php'; ?>
+<?php $currentAdminPage = basename($_SERVER['PHP_SELF']); ?>
 <div class="admin-layout">
     <!-- SIDEBAR -->
     <aside class="admin-sidebar">
@@ -14,15 +13,16 @@ require '../includes/admin_auth.php';
             </div>
             <nav class="admin-nav">
                 <a href="/admin/index.php"
-                   class="admin-link active">
+                   class="admin-link <?= $currentAdminPage == 'index.php' ? 'active' : '' ?>">
                     <i class="bi bi-grid-1x2-fill"></i>
                     Dashboard
                 </a>
                 <a href="/admin/messages.php"
-                   class="admin-link">
+                   class="admin-link <?= $currentAdminPage == 'index.php' ? 'active' : '' ?>">
                     <i class="bi bi-envelope-fill"></i>
                     Сообщения
                 </a>
+                <!--
                 <a href="#"
                    class="admin-link">
                     <i class="bi bi-people-fill"></i>
@@ -38,6 +38,7 @@ require '../includes/admin_auth.php';
                     <i class="bi bi-database-fill"></i>
                     Резервные копии
                 </a>
+                -->
             </nav>
         </div>
         <div class="admin-system-status">
@@ -76,26 +77,26 @@ require '../includes/admin_auth.php';
         </div>
         <!-- STATS -->
         <div class="row g-4 mb-5">
+            <?php
+            // Получаем реальное количество сообщений
+            $stmtCount = $pdo->query("SELECT COUNT(*) FROM messages");
+            $totalMessages = $stmtCount->fetchColumn();
+            // Получаем общее количество сообщений
+            ?>
             <div class="col-lg-4">
                 <div class="dashboard-card">
                     <div class="dashboard-icon">
                         <i class="bi bi-envelope-fill"></i>
                     </div>
-                    <div>
-                        <h3>
-                            24
-                        </h3>
-                        <p>
-                            Новых сообщений
-                        </p>
-                    </div>
+                <div>
+                    <h3><?= $totalMessages ?></h3>
+                    <p>Всего сообщений</p>
                 </div>
             </div>
             <div class="col-lg-4">
                 <div class="dashboard-card">
                     <div class="dashboard-icon">
                         <i class="bi bi-shield-check"></i>
-
                     </div>
                     <div>
                         <h3>
