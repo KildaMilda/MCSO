@@ -1,5 +1,4 @@
 <?php
-// logout.php
 // === Настройки безопасности ===
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_strict_mode', 1);
@@ -7,26 +6,33 @@ if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
     ini_set('session.cookie_secure', 1);
 }
 session_start();
-// Если это GET-запрос — показываем понятную ошибку
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405); // Method Not Allowed
+// Функция для показа красивой ошибки
+function showError($title, $message, $buttonText, $buttonLink) {
     ?>
     <!DOCTYPE html>
-    <html>
+    <html lang="ru">
     <head>
-        <title>Ошибка выхода</title>
+        <meta charset="UTF-8">
+        <title>Ошибка</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <style>
+            body { background: linear-gradient(135deg, #f5f7fb 0%, #eef3ff 100%); min-height: 100vh; }
+            .error-card { border-radius: 24px; border: none; box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1); }
+        </style>
     </head>
-    <body class="bg-light">
+    <body>
         <div class="container py-5">
             <div class="row justify-content-center">
                 <div class="col-lg-5">
-                    <div class="card shadow-sm">
+                    <div class="card error-card">
                         <div class="card-body text-center p-5">
-                            <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 48px;"></i>
-                            <h3 class="mt-3">Некорректный запрос</h3>
-                            <p class="text-muted">Для выхода из системы используйте кнопку на странице подтверждения.</p>
-                            <a href="logout_confirm.php" class="btn btn-primary">Перейти к выходу</a>
+                            <?= $title ?>
+                            <h3 class="mt-3 mb-3"><?= strip_tags($title) ?></h3>
+                            <p class="text-muted mb-4"><?= htmlspecialchars($message) ?></p>
+                            <a href="<?= htmlspecialchars($buttonLink) ?>" class="btn btn-primary px-4 py-2">
+                                <?= htmlspecialchars($buttonText) ?>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -37,51 +43,39 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     <?php
     exit;
 }
-// Проверка CSRF
+// 1. Проверяем метод запроса (должен быть POST)
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    showError(
+        '<i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 48px;"></i>',
+        'Для выхода из системы необходимо подтверждение.',
+        'Перейти к подтверждению',
+        'logout_confirm.php'
+    );
+}
+// 2. Проверяем CSRF-токен
 if (
     !isset($_POST['csrf_logout_token']) ||
     !isset($_SESSION['csrf_logout_token']) ||
     !hash_equals($_SESSION['csrf_logout_token'], $_POST['csrf_logout_token'])
 ) {
-    http_response_code(403);
-    ?>
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Ошибка безопасности</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    </head>
-    <body class="bg-light">
-        <div class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-lg-5">
-                    <div class="card shadow-sm">
-                        <div class="card-body text-center p-5">
-                            <i class="bi bi-shield-exclamation text-danger" style="font-size: 48px;"></i>
-                            <h3 class="mt-3">Ошибка валидации</h3>
-                            <p class="text-muted">Недействительный токен безопасности. Попробуйте ещё раз.</p>
-                            <a href="logout_confirm.php" class="btn btn-primary">Попробовать снова</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </body>
-    </html>
-    <?php
-    exit;
+    showError(
+        '<i class="bi bi-shield-exclamation text-danger" style="font-size: 48px;"></i>',
+        'Недействительный токен безопасности. Возможно, сессия устарела.',
+        'Попробовать снова',
+        'logout_confirm.php'
+    );
 }
-// Полная очистка сессии
+// 3. Очищаем сессию
 $_SESSION = array();
-// Удаляем cookie сессии
+// 4. Удаляем cookie сессии
 if (isset($_COOKIE[session_name()])) {
     setcookie(session_name(), '', time() - 42000, '/');
 }
-// Удаляем CSRF-токен (необязательно, но аккуратно)
+// 5. Удаляем CSRF-токен из памяти (на всякий случай)
 unset($_SESSION['csrf_logout_token']);
-// Разрушаем сессию
+// 6. Разрушаем сессию
 session_destroy();
-// Перенаправляем на страницу логина с сообщением
+// 7. Перенаправляем на страницу логина
 header("Location: login.php?logout=1");
 exit;
 ?>
