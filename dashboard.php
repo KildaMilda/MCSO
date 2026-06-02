@@ -5,20 +5,9 @@ require 'includes/auth.php';
 <section class="py-5">
     <div class="container">
         <div class="info-card">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h2>
-                        Панель пользователя
-                    </h2>
-                    <p class="text-muted mb-0">
-                        Добро пожаловать,
-                        <?= htmlspecialchars($_SESSION['username']) ?>
-                    </p>
-                </div>
-                <a href="logout.php"
-                   class="btn btn-outline-danger">
-                    Выйти
-                </a>
+            <div class="mb-4">
+                <h2>Панель пользователя</h2>
+                <p class="text-muted mb-0">Добро пожаловать, <?= htmlspecialchars($_SESSION['username']) ?></p>
             </div>
             <hr>
             <div class="row g-4">
