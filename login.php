@@ -22,12 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$username]);
     $user = $stmt->fetch();
     if ($user && password_verify($password, $user['password'])) {
-        // === КРИТИЧНО ВАЖНО ===
-        session_regenerate_id(true);           // Защита от Session Fixation
+        session_regenerate_id(true);
         $_SESSION['user_id']   = $user['id'];
         $_SESSION['username']  = $user['username'];
         $_SESSION['role']      = $user['role'];
-        $_SESSION['login_time'] = time();      // Для контроля неактивности
+        $_SESSION['login_time'] = time();
         header("Location: dashboard.php");
         exit;
     } else {
@@ -42,18 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="col-lg-5">
                 <div class="info-card">
                     <h2 class="mb-4 text-center">Авторизация</h2>
-                    <?php if ($error): ?>
-                        <div class="alert alert-danger">
-                            <?= htmlspecialchars($error) ?>
-                        </div>
-                    <?php endif; ?>
                     <?php if ($successMessage): ?>
                         <div class="alert alert-success text-center">
                             <?= htmlspecialchars($successMessage) ?>
                         </div>
                     <?php endif; ?>
                     <?php if ($error): ?>
-                        <div class="alert alert-danger">
+                        <div class="alert alert-danger text-center">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
                             <?= htmlspecialchars($error) ?>
                         </div>
                     <?php endif; ?>
@@ -73,4 +68,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 </section>
-<?php include 'includes/footer.php'; ?>
