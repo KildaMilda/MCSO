@@ -1,45 +1,66 @@
 <?php
 session_start();
+// Проверка CSRF
 if (
     !isset($_POST['csrf_token']) ||
     !isset($_SESSION['csrf_token']) ||
     !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])
 ) {
     http_response_code(403);
-    exit('Недействительный CSRF-токен');
+    die('Недействительный CSRF-токен');
 }
 require 'config/db.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
-        if (empty($email)) {
-            die('Email обязателен');
-        }
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            die('Некорректный email');
-        }
-        if (strlen($email) > 255) {
-            die('Слишком длинный email');
-        }
     $message = trim($_POST['message']);
-    /*
-     * Защита от XSS
-     */
-    $name = htmlspecialchars($name);
-    $email = htmlspecialchars($email);
-    $message = htmlspecialchars($message);
-    /*
-     * Prepared Statement
-     */
-    $stmt = $pdo->prepare(
-        "INSERT INTO messages (name, email, message)
-         VALUES (?, ?, ?)"
-    );
-    $stmt->execute([
-        $name,
-        $email,
-        $message
-    ]);
-    header("Location: form.php?success=1");
+    // Валидация
+    $errors = [];
+    if (empty($name)) {
+        $errors[] = 'Имя обязательно для заполнения';
+    } elseif (strlen($name) > 100) {
+        $errors[] = 'Имя не должно превышать 100 символов';
+    }
+    if (empty($email)) {
+        $errors[] = 'Email обязателен для заполнения';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'Введите корректный email адрес';
+    } elseif (strlen($email) > 255) {
+        $errors[] = 'Email не должен превышать 255 символов';
+    }
+    if (empty($message)) {
+        $errors[] = 'Сообщение не может быть пустым';
+    } elseif (strlen($message) > 5000) {
+        $errors[] = 'Сообщение не должно превышать 5000 символов';
+    }
+    // Если есть ошибки — возвращаем на форму
+    if (!empty($errors)) {
+        $errorString = implode(', ', $errors);
+        header("Location: form.php?error=" . urlencode($errorString));
+        exit;
+    }
+    // Безопасное экранирование перед сохранением
+    $name_safe = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+    $email_safe = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
+    $message_safe = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
+    // Prepared Statement
+    try {
+        $stmt = $pdo->prepare(
+            "INSERT INTO messages (name, email, message) VALUES (?, ?, ?)"
+        );
+        $stmt->execute([$name_safe, $email_safe, $message_safe]);
+        // Удаляем CSRF-токен после успешной отправки
+        unset($_SESSION['csrf_token']);
+        header("Location: form.php?success=1");
+        exit;
+    } catch (PDOException $e) {
+        error_log("Ошибка сохранения сообщения: " . $e->getMessage());
+        header("Location: form.php?error=Ошибка сервера. Попробуйте позже.");
+        exit;
+    }
+} else {
+    // Не POST-запрос
+    header("Location: form.php");
     exit;
 }
+?>
