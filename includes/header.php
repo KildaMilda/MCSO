@@ -61,21 +61,34 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <li class="nav-item ms-lg-3 mt-3 mt-lg-0 d-flex align-items-center gap-3">
+                    <!-- Авторизован -->
+                    <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
                         <span class="fw-semibold text-primary">
                             <i class="bi bi-person-circle"></i>
                             <?= htmlspecialchars($_SESSION['username']) ?>
                         </span>
-                        <a class="btn btn-outline-danger px-4 py-2 rounded-3"
-                            href="/logout_confirm.php">
-                            Выйти
-                        </a>
+                    </li>
+                    <li class="nav-item mt-3 mt-lg-0">
+                        <form action="logout.php" method="POST" style="display: inline;">
+                            <?php
+                            // Генерируем CSRF-токен для выхода
+                            if (empty($_SESSION['csrf_logout_token'])) {
+                                $_SESSION['csrf_logout_token'] = bin2hex(random_bytes(32));
+                            }
+                            ?>
+                            <input type="hidden" 
+                                   name="csrf_logout_token" 
+                                   value="<?= htmlspecialchars($_SESSION['csrf_logout_token']) ?>">
+                            <button type="submit" class="btn btn-outline-danger px-4 py-2 rounded-3">
+                                <i class="bi bi-box-arrow-right"></i> Выйти
+                            </button>
+                        </form>
                     </li>
                 <?php else: ?>
+                    <!-- Не авторизован -->
                     <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
-                        <a class="btn btn-primary px-4 py-2 rounded-3"
-                           href="/login.php">
-                           Войти
+                        <a class="btn btn-primary px-4 py-2 rounded-3" href="/login.php">
+                            <i class="bi bi-box-arrow-in-right"></i> Войти
                         </a>
                     </li>
                 <?php endif; ?>
